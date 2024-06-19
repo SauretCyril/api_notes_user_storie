@@ -1,0 +1,636 @@
+{
+	"info": {
+		"_postman_id": "f4150a32-a221-40e4-aed3-4e6d861a6f9c",
+		"name": "Quest_4_users_stories_test_nominal",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36210311"
+	},
+	"item": [
+		{
+			"name": "health-check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"/*\r",
+							"let status = pm.response.json().status;\r",
+							"console.log(status);\r",
+							"switch (status) {\r",
+							"  case \"404\":\r",
+							"    pm.test(\"adresse is error\", function () {\r",
+							"        pm.response.to.have.status(\"404\");\r",
+							"    });\r",
+							"    break;\r",
+							"  case \"200\":\r",
+							"    pm.test(\"Successful POST request\", function () {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+							"    })\r",
+							"    break;\r",
+							"}\r",
+							"*/\r",
+							"\r",
+							"const res = pm.response.json()\r",
+							"const status = pm.response.code\r",
+							"\r",
+							"if (status === 200) {\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							" \r",
+							"\r",
+							"pm.test(\"body have proprieties sucess, status and message \", function (){\r",
+							"\r",
+							"pm.expect(res).to.have.property(\"sucess\")\r",
+							"pm.expect(res).to.have.property(\"status\")\r",
+							"pm.expect(res).to.have.property(\"message\")\r",
+							"    \r",
+							"})\r",
+							"\r",
+							"} else if (status === 404) {\r",
+							"pm.test(\"Status code is 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"} else if (status === 500) {\r",
+							"pm.test(\"Status code is 500\", function () {\r",
+							"    pm.response.to.have.status(500);\r",
+							"});\r",
+							"}\r",
+							"\r",
+							"\r",
+							"\r",
+							"  "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/health-check1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"health-check1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US_01_Register",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let resp = pm.response.json();",
+							"if (pm.response.code===409)",
+							"{",
+							"  pm.execution.setNextRequest('US_02_login'); ",
+							"}",
+							"",
+							"",
+							"",
+							"pm.test(\"New user is created\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"})",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"name\",\"Tarte en pion\");\r",
+							"pm.collectionVariables.set(\"email\",\"tarte@enpion.fr\");\r",
+							"pm.collectionVariables.set(\"password\",\"toto123\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "{{name}}",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "{{email}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/users/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"register"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "US_02_login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let resp = pm.response.json();\r",
+							"let token= resp.data.token;\r",
+							"\r",
+							"pm.collectionVariables.set(\"x-auth-token\",token);\r",
+							"pm.test(\"user logged\", function () {\r",
+							"    \r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+							"    \r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"email\",\"tarte@enpion.fr\");\r",
+							"pm.collectionVariables.set(\"password\",\"toto123\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "{{email}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/users/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US_03_afficher profile",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"profile retreive Ok\", function () {\r",
+							"     pm.expect(pm.response.code).to.be.oneOf([200, 201]); \r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/users/profile",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US_04_Modifier le profile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"profile  modified\", function () {\r",
+							"\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]); \r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.collectionVariables.set(\"phone\",\"0734450910\");\r",
+							"pm.collectionVariables.set(\"compagny\",\"LOL\");\r",
+							"pm.collectionVariables.set(\"name\",\"Tarte en pion\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "{{name}}",
+							"type": "text"
+						},
+						{
+							"key": "phone",
+							"value": "{{phone}}",
+							"type": "text"
+						},
+						{
+							"key": "compagny",
+							"value": "{{compagny}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/users/profile",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US_05_Creation_note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Creation d'une note\", function () {\r",
+							"\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]); \r",
+							"})\r",
+							"let resp = pm.response.json();\r",
+							"\r",
+							"pm.collectionVariables.set(\"noteId\",resp.data.id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.collectionVariables.set(\"title\",\"saint jame' de bond\");\r",
+							"pm.collectionVariables.set(\"description vie tumultuesue\",\"LOL\");\r",
+							"pm.collectionVariables.set(\"category\",\"Personal\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "title",
+							"value": "{{title}}",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "{{description}}",
+							"type": "text"
+						},
+						{
+							"key": "category",
+							"value": "{{category}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/notes",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US_06_Afficher_une_note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"afficher une note\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]); \r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"id\",pm.collectionVariables.get(\"noteId\"));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/notes/?id={{id]]",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"notes",
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{id]]"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US_07_supprimer_une_note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"suppression d'une note\", function () {\r",
+							"\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]); \r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"id\",pm.collectionVariables.get(\"noteId\"));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/notes/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"notes",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US_08_suprimer_son_compte",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"suppression du compte\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]); \r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/users/delete-account",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"delete-account"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "inherit"
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"\r",
+					"    let token =pm.collectionVariables.get(\"x-auth-token\");\r",
+					"    pm.request.headers.add(\r",
+					"    {\r",
+					"    key: \"x-auth-token\",\r",
+					"    value: token\r",
+					"    });\r",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://practice.expandtesting.com/notes/api",
+			"type": "string"
+		},
+		{
+			"key": "root_login",
+			"value": "notes/api/users/login"
+		},
+		{
+			"key": "name",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "phone",
+			"value": ""
+		},
+		{
+			"key": "compagny",
+			"value": ""
+		},
+		{
+			"key": "title",
+			"value": ""
+		},
+		{
+			"key": "description vie tumultuesue",
+			"value": ""
+		},
+		{
+			"key": "category",
+			"value": ""
+		},
+		{
+			"key": "id",
+			"value": ""
+		},
+		{
+			"key": "noteId",
+			"value": ""
+		},
+		{
+			"key": "x-auth-token",
+			"value": ""
+		}
+	]
+}
